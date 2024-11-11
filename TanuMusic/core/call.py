@@ -35,7 +35,7 @@ from TanuMusic.utils.exceptions import AssistantErr
 from TanuMusic.utils.formatters import check_duration, seconds_to_min, speed_converter
 from TanuMusic.utils.inline.play import stream_markup
 from TanuMusic.utils.stream.autoclear import auto_clean
-from TanuMusic.utils.thumbnails import gen_thumb
+from TanuMusic.utils.thumbnails import get_thumb
 from strings import get_string
 
 autoend = {}
