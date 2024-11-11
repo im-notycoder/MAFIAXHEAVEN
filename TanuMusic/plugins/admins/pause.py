@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 from TanuMusic import app
-from TanuMusic.core.call import Aviax
+from TanuMusic.core.call import Tanu 
 from TanuMusic.utils.database import is_music_playing, music_off
 from TanuMusic.utils.decorators import AdminRightsCheck
 from TanuMusic.utils.inline import close_markup
