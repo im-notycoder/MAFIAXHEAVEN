@@ -4,7 +4,7 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 from TanuMusic import app
-from TanuMusic.core.call import TanuMusic
+from TanuMusic.core.call import Tanu
 from TanuMusic.utils import bot_sys_stats
 from TanuMusic.utils.decorators.language import language
 from TanuMusic.utils.inline import supp_markup
@@ -19,7 +19,7 @@ async def ping_com(client, message: Message, _):
         photo=PING_IMG_URL,
         caption=_["ping_1"].format(app.mention),
     )
-    pytgping = await TanuMusic.ping()
+    pytgping = await Tanu.ping()
     UP, CPU, RAM, DISK = await bot_sys_stats()
     resp = (datetime.now() - start).microseconds / 1000
     await response.edit_text(
