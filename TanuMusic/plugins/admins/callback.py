@@ -4,7 +4,7 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from TanuMusic import YouTube, app
-from TanuMusic.core.call import Aviax as Anony
+from TanuMusic.core.call import Tanu 
 from TanuMusic.misc import SUDOERS, db
 from TanuMusic.utils.database import (
     get_active_chats,
