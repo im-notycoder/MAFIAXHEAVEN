@@ -31,7 +31,12 @@ async def main():
     print(BOT_USERNAME)
 
 import asyncio
-asyncio.run(main())
+
+if asyncio.get_event_loop().is_running():
+    # Handle the case when the event loop is already running
+    await main()
+else:
+    asyncio.run(main())
 
 MAX_STICKERS = (
     120  # would be better if we could fetch this limit directly from telegram
