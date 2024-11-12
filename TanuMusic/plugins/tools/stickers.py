@@ -18,8 +18,7 @@ from pyrogram.errors import (
 from pyrogram.file_id import FileId
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from TanuMusic import app
-from utils.error import capture_err
+from TanuMusic.utils.error import capture_err
 
 BOT_USERNAME = app.username
 
