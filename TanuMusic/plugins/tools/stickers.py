@@ -32,11 +32,11 @@ async def main():
 
 import asyncio
 
-if asyncio.get_event_loop().is_running():
-    # Handle the case when the event loop is already running
+async def run():
     await main()
-else:
-    asyncio.run(main())
+
+if __name__ == "__main__":
+    asyncio.run(run())
 
 MAX_STICKERS = (
     120  # would be better if we could fetch this limit directly from telegram
