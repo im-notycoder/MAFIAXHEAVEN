@@ -23,7 +23,15 @@ from TanuMusic.utils.error import capture_err
 from pyrogram import Client
 
 app = Client("my_bot")
-BOT_USERNAME = app.username
+
+async def main():
+    await app.start()  # Ensures the client is connected
+    bot_info = await app.get_me()  # Fetches bot info
+    BOT_USERNAME = bot_info.username  # Assigns bot's username
+    print(BOT_USERNAME)
+
+import asyncio
+asyncio.run(main())
 
 MAX_STICKERS = (
     120  # would be better if we could fetch this limit directly from telegram
