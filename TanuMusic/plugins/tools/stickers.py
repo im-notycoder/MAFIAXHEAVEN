@@ -20,6 +20,9 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from TanuMusic.utils.error import capture_err
 
+from pyrogram import Client
+
+app = Client("my_bot")
 BOT_USERNAME = app.username
 
 MAX_STICKERS = (
