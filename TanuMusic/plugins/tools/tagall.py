@@ -37,7 +37,7 @@ async def tag_all_users(_, message):
     replied = message.reply_to_message
     if len(message.command) < 2 and not replied:
         await message.reply_text(
-            "** ɢɪᴠᴇ sᴏᴍᴇ ᴛᴇxᴛ ᴛᴏ ᴛᴀɢ ᴀʟʟ, ʟɪᴋᴇ »** `@all Hi Friends`"
+            "<b>ɢɪᴠᴇ sᴏᴍᴇ ᴛᴇxᴛ ᴛᴏ ᴛᴀɢ ᴀʟʟ, ʟɪᴋᴇ »</b> `@all Hi Friends`"
         )
         return
     if replied:
@@ -116,7 +116,7 @@ async def tag_all_admins(_, message):
     replied = message.reply_to_message
     if len(message.command) < 2 and not replied:
         await message.reply_text(
-            "** ɢɪᴠᴇ sᴏᴍᴇ ᴛᴇxᴛ ᴛᴏ ᴛᴀɢ ᴀʟʟ, ʟɪᴋᴇ »** `@admins Hi Friends`"
+            "<b> ɢɪᴠᴇ sᴏᴍᴇ ᴛᴇxᴛ ᴛᴏ ᴛᴀɢ ᴀʟʟ, ʟɪᴋᴇ »</b> `@admins Hi Friends`"
         )
         return
     if replied:
