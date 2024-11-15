@@ -6,280 +6,229 @@ from pyrogram.errors import FloodWait
 
 from TanuMusic import app
 
+spam_chats = []
 
-SPAM_CHATS = []
+EMOJI = [ "🦋🦋🦋🦋🦋",
+          "🧚🌸🧋🍬🫖",
+          "🥀🌷🌹🌺💐",
+          "🌸🌿💮🌱🌵",
+          "❤️💚💙💜🖤",
+          "💓💕💞💗💖",
+          "🌸💐🌺🌹🦋",
+          "🍔🦪🍛🍲🥗",
+          "🍎🍓🍒🍑🌶️",
+          "🧋🥤🧋🥛🍷",
+          "🍬🍭🧁🎂🍡",
+          "🍨🧉🍺☕🍻",
+          "🥪🥧🍦🍥🍚",
+          "🫖☕🍹🍷🥛",
+          "☕🧃🍩🍦🍙",
+          "🍁🌾💮🍂🌿",
+          "🌨️🌥️⛈️🌩️🌧️",
+          "🌷🏵️🌸🌺💐",
+          "💮🌼🌻🍀🍁",
+          "🧟🦸🦹🧙👸",
+          "🧅🍠🥕🌽🥦",
+          "🐷🐹🐭🐨🐻‍❄️",
+          "🦋🐇🐀🐈🐈‍⬛",
+          "🌼🌳🌲🌴🌵",
+          "🥩🍋🍐🍈🍇",
+          "🍴🍽️🔪🍶🥃",
+          "🕌🏰🏩⛩️🏩",
+          "🎉🎊🎈🎂🎀",
+          "🪴🌵🌴🌳🌲",
+          "🎄🎋🎍🎑🎎",
+          "🦅🦜🕊️🦤🦢",
+          "🦤🦩🦚🦃🦆",
+          "🐬🦭🦈🐋🐳",
+          "🐔🐟🐠🐡🦐",
+          "🦩🦀🦑🐙🦪",
+          "🐦🦂🕷️🕸️🐚",
+          "🥪🍰🥧🍨🍨",
+          " 🥬🍉🧁🧇",
+        ]
 
+TAGMES = [ " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ 🌚** ",
+           " **➠ ᴄʜᴜᴘ ᴄʜᴀᴘ sᴏ ᴊᴀ 🙊** ",
+           " **➠ ᴘʜᴏɴᴇ ʀᴀᴋʜ ᴋᴀʀ sᴏ ᴊᴀ, ɴᴀʜɪ ᴛᴏ ʙʜᴏᴏᴛ ᴀᴀ ᴊᴀʏᴇɢᴀ..👻** ",
+           " **➠ ᴀᴡᴇᴇ ʙᴀʙᴜ sᴏɴᴀ ᴅɪɴ ᴍᴇɪɴ ᴋᴀʀ ʟᴇɴᴀ ᴀʙʜɪ sᴏ ᴊᴀᴏ..?? 🥲** ",
+           " **➠ ᴍᴜᴍᴍʏ ᴅᴇᴋʜᴏ ʏᴇ ᴀᴘɴᴇ ɢғ sᴇ ʙᴀᴀᴛ ᴋʀ ʀʜᴀ ʜ ʀᴀᴊᴀɪ ᴍᴇ ɢʜᴜs ᴋᴀʀ, sᴏ ɴᴀʜɪ ʀᴀʜᴀ 😜** ",
+           " **➠ ᴘᴀᴘᴀ ʏᴇ ᴅᴇᴋʜᴏ ᴀᴘɴᴇ ʙᴇᴛᴇ ᴋᴏ ʀᴀᴀᴛ ʙʜᴀʀ ᴘʜᴏɴᴇ ᴄʜᴀʟᴀ ʀʜᴀ ʜᴀɪ 🤭** ",
+           " **➠ ᴊᴀɴᴜ ᴀᴀᴊ ʀᴀᴀᴛ ᴋᴀ sᴄᴇɴᴇ ʙɴᴀ ʟᴇ..?? 🌠** ",
+           " **➠ ɢɴ sᴅ ᴛᴄ.. 🙂** ",
+           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ sᴡᴇᴇᴛ ᴅʀᴇᴀᴍ ᴛᴀᴋᴇ ᴄᴀʀᴇ..?? ✨** ",
+           " **➠ ʀᴀᴀᴛ ʙʜᴜᴛ ʜᴏ ɢʏɪ ʜᴀɪ sᴏ ᴊᴀᴏ, ɢɴ..?? 🌌** ",
+           " **➠ ᴍᴜᴍᴍʏ ᴅᴇᴋʜᴏ 11 ʙᴀᴊɴᴇ ᴡᴀʟᴇ ʜᴀɪ ʏᴇ ᴀʙʜɪ ᴛᴀᴋ ᴘʜᴏɴᴇ ᴄʜᴀʟᴀ ʀʜᴀ ɴᴀʜɪ sᴏ ɴᴀʜɪ ʀʜᴀ 🕦** ",
+           " **➠ ᴋᴀʟ sᴜʙʜᴀ sᴄʜᴏᴏʟ ɴᴀʜɪ ᴊᴀɴᴀ ᴋʏᴀ, ᴊᴏ ᴀʙʜɪ ᴛᴀᴋ ᴊᴀɢ ʀʜᴇ ʜᴏ 🏫** ",
+           " **➠ ʙᴀʙᴜ, ɢᴏᴏᴅ ɴɪɢʜᴛ sᴅ ᴛᴄ..?? 😊** ",
+           " **➠ ᴀᴀᴊ ʙʜᴜᴛ ᴛʜᴀɴᴅ ʜᴀɪ, ᴀᴀʀᴀᴍ sᴇ ᴊᴀʟᴅɪ sᴏ ᴊᴀᴛɪ ʜᴏᴏɴ 🌼** ",
+           " **➠ ᴊᴀɴᴇᴍᴀɴ, ɢᴏᴏᴅ ɴɪɢʜᴛ 🌷** ",
+           " **➠ ᴍᴇ ᴊᴀ ʀᴀʜɪ sᴏɴᴇ, ɢɴ sᴅ ᴛᴄ 🏵️** ",
+           " **➠ ʜᴇʟʟᴏ ᴊɪ ɴᴀᴍᴀsᴛᴇ, ɢᴏᴏᴅ ɴɪɢʜᴛ 🍃** ",
+           " **➠ ʜᴇʏ, ʙᴀʙʏ ᴋᴋʀʜ..? sᴏɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ ☃️** ",
+           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ ᴊɪ, ʙʜᴜᴛ ʀᴀᴀᴛ ʜᴏ ɢʏɪ..? ⛄** ",
+           " **➠ ᴍᴇ ᴊᴀ ʀᴀʜɪ ʀᴏɴᴇ, ɪ ᴍᴇᴀɴ sᴏɴᴇ ɢᴏᴏᴅ ɴɪɢʜᴛ ᴊɪ 😁** ",
+           " **➠ ᴍᴀᴄʜʜᴀʟɪ ᴋᴏ ᴋᴇʜᴛᴇ ʜᴀɪ ғɪsʜ, ɢᴏᴏᴅ ɴɪɢʜᴛ ᴅᴇᴀʀ ᴍᴀᴛ ᴋʀɴᴀ ᴍɪss, ᴊᴀ ʀʜɪ sᴏɴᴇ 🌄** ",
+           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ ʙʀɪɢʜᴛғᴜʟʟ ɴɪɢʜᴛ 🤭** ",
+           " **➠ ᴛʜᴇ ɴɪɢʜᴛ ʜᴀs ғᴀʟʟᴇɴ, ᴛʜᴇ ᴅᴀʏ ɪs ᴅᴏɴᴇ,, ᴛʜᴇ ᴍᴏᴏɴ ʜᴀs ᴛᴀᴋᴇɴ ᴛʜᴇ ᴘʟᴀᴄᴇ ᴏғ ᴛʜᴇ sᴜɴ... 😊** ",
+           " **➠ ᴍᴀʏ ᴀʟʟ ʏᴏᴜʀ ᴅʀᴇᴀᴍs ᴄᴏᴍᴇ ᴛʀᴜᴇ ❤️** ",
+           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ sᴘʀɪɴᴋʟᴇs sᴡᴇᴇᴛ ᴅʀᴇᴀᴍ 💚** ",
+           " **➠ ɢᴏᴏᴅ ɴɪɢʜᴛ, ɴɪɴᴅ ᴀᴀ ʀʜɪ ʜᴀɪ 🥱** ",
+           " **➠ ᴅᴇᴀʀ ғʀɪᴇɴᴅ ɢᴏᴏᴅ ɴɪɢʜᴛ 💤** ",
+           " **➠ ʙᴀʙʏ ᴀᴀᴊ ʀᴀᴀᴛ ᴋᴀ sᴄᴇɴᴇ ʙɴᴀ ʟᴇ 🥰** ",
+           " **➠ ɪᴛɴɪ ʀᴀᴀᴛ ᴍᴇ ᴊᴀɢ ᴋᴀʀ ᴋʏᴀ ᴋᴀʀ ʀʜᴇ ʜᴏ sᴏɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ 😜** ",
+           " **➠ ᴄʟᴏsᴇ ʏᴏᴜʀ ᴇʏᴇs sɴᴜɢɢʟᴇ ᴜᴘ ᴛɪɢʜᴛ,, ᴀɴᴅ ʀᴇᴍᴇᴍʙᴇʀ ᴛʜᴀᴛ ᴀɴɢᴇʟs, ᴡɪʟʟ ᴡᴀᴛᴄʜ ᴏᴠᴇʀ ʏᴏᴜ ᴛᴏɴɪɢʜᴛ... 💫** ",
+           ]
 
-async def is_admin(chat_id, user_id):
-    admin_ids = [
-        admin.user.id
-        async for admin in app.get_chat_members(
-            chat_id, filter=ChatMembersFilter.ADMINISTRATORS
-        )
-    ]
-    if user_id in admin_ids:
-        return True
-    return False
-
-
-@app.on_message(
-    filters.command(["all", "allmention", "mentionall", "tagall"], prefixes=["/", "@"])
-)
-async def tag_all_users(_, message):
-    admin = await is_admin(message.chat.id, message.from_user.id)
-    if not admin:
-        return
-
-    if message.chat.id in SPAM_CHATS:
-        return await message.reply_text(
-            "ᴛᴀɢɢɪɴɢ ᴘʀᴏᴄᴇss ɪs ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ sᴛᴏᴘ sᴏ ᴜsᴇ /cancel"
-        )
-    replied = message.reply_to_message
-    if len(message.command) < 2 and not replied:
-        await message.reply_text(
-            "<b>ɢɪᴠᴇ sᴏᴍᴇ ᴛᴇxᴛ ᴛᴏ ᴛᴀɢ ᴀʟʟ, ʟɪᴋᴇ »</b> `@all Hi Friends`"
-        )
-        return
-    if replied:
-        usernum = 0
-        usertxt = ""
-        try:
-            SPAM_CHATS.append(message.chat.id)
-            async for m in app.get_chat_members(message.chat.id):
-                if message.chat.id not in SPAM_CHATS:
-                    break
-                if m.user.is_deleted or m.user.is_bot:
-                    continue
-                usernum += 1
-                usertxt += f"[{m.user.first_name}](tg://user?id={m.user.id})  "
-                if usernum == 7:
-                    await replied.reply_text(
-                        usertxt,
-                        disable_web_page_preview=True,
-                    )
-                    await asyncio.sleep(1)
-                    usernum = 0
-                    usertxt = ""
-
-            if usernum != 0:
-                await replied.reply_text(
-                    usertxt,
-                    disable_web_page_preview=True,
-                )
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
-        try:
-            SPAM_CHATS.remove(message.chat.id)
-        except Exception:
-            pass
-    else:
-        try:
-            usernum = 0
-            usertxt = ""
-            text = message.text.split(None, 1)[1]
-            SPAM_CHATS.append(message.chat.id)
-            async for m in app.get_chat_members(message.chat.id):
-                if message.chat.id not in SPAM_CHATS:
-                    break
-                if m.user.is_deleted or m.user.is_bot:
-                    continue
-                usernum += 1
-                usertxt += f"[{m.user.first_name}](tg://user?id={m.user.id})  "
-                if usernum == 7:
-                    await app.send_message(
-                        message.chat.id,
-                        f"{text}\n{usertxt}",
-                        disable_web_page_preview=True,
-                    )
-                    await asyncio.sleep(2)
-                    usernum = 0
-                    usertxt = ""
-            if usernum != 0:
-                await app.send_message(
-                    message.chat.id,
-                    f"{text}\n\n{usertxt}",
-                    disable_web_page_preview=True,
-                )
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
-        try:
-            SPAM_CHATS.remove(message.chat.id)
-        except Exception:
-            pass
+VC_TAG = [ "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ᴋᴇsᴇ ʜᴏ 🐱**",
+         "**➠ ɢᴍ, sᴜʙʜᴀ ʜᴏ ɢʏɪ ᴜᴛʜɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ 🌤️**",
+         "**➠ ɢᴍ ʙᴀʙʏ, ᴄʜᴀɪ ᴘɪ ʟᴏ ☕**",
+         "**➠ ᴊᴀʟᴅɪ ᴜᴛʜᴏ, sᴄʜᴏᴏʟ ɴᴀʜɪ ᴊᴀɴᴀ ᴋʏᴀ 🏫**",
+         "**➠ ɢᴍ, ᴄʜᴜᴘ ᴄʜᴀᴘ ʙɪsᴛᴇʀ sᴇ ᴜᴛʜᴏ ᴠʀɴᴀ ᴘᴀɴɪ ᴅᴀʟ ᴅᴜɴɢɪ 🧊**",
+         "**➠ ʙᴀʙʏ ᴜᴛʜᴏ ᴀᴜʀ ᴊᴀʟᴅɪ ғʀᴇsʜ ʜᴏ ᴊᴀᴏ, ɴᴀsᴛᴀ ʀᴇᴀᴅʏ ʜᴀɪ 🫕**",
+         "**➠ ᴏғғɪᴄᴇ ɴᴀʜɪ ᴊᴀɴᴀ ᴋʏᴀ ᴊɪ ᴀᴀᴊ, ᴀʙʜɪ ᴛᴀᴋ ᴜᴛʜᴇ ɴᴀʜɪ 🏣**",
+         "**➠ ɢᴍ ᴅᴏsᴛ, ᴄᴏғғᴇᴇ/ᴛᴇᴀ ᴋʏᴀ ʟᴏɢᴇ ☕🍵**",
+         "**➠ ʙᴀʙʏ 8 ʙᴀᴊɴᴇ ᴡᴀʟᴇ ʜᴀɪ, ᴀᴜʀ ᴛᴜᴍ ᴀʙʜɪ ᴛᴋ ᴜᴛʜᴇ ɴᴀʜɪ 🕖**",
+         "**➠ ᴋʜᴜᴍʙʜᴋᴀʀᴀɴ ᴋɪ ᴀᴜʟᴀᴅ ᴜᴛʜ ᴊᴀᴀ... ☃️**",
+         "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ʜᴀᴠᴇ ᴀ ɴɪᴄᴇ ᴅᴀʏ... 🌄**",
+         "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ʜᴀᴠᴇ ᴀ ɢᴏᴏᴅ ᴅᴀʏ... 🪴**",
+         "**➠ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ ʙᴀʙʏ 😇**",
+         "**➠ ᴍᴜᴍᴍʏ ᴅᴇᴋʜᴏ ʏᴇ ɴᴀʟᴀʏᴋ ᴀʙʜɪ ᴛᴀᴋ sᴏ ʀʜᴀ ʜᴀɪ... 😵‍💫**",
+         "**➠ ʀᴀᴀᴛ ʙʜᴀʀ ʙᴀʙᴜ sᴏɴᴀ ᴋʀ ʀʜᴇ ᴛʜᴇ ᴋʏᴀ, ᴊᴏ ᴀʙʜɪ ᴛᴋ sᴏ ʀʜᴇ ʜᴏ ᴜᴛʜɴᴀ ɴᴀʜɪ ʜᴀɪ ᴋʏᴀ... 😏**",
+         "**➠ ʙᴀʙᴜ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴜᴛʜ ᴊᴀᴏ ᴀᴜʀ ɢʀᴏᴜᴘ ᴍᴇ sᴀʙ ғʀɪᴇɴᴅs ᴋᴏ ɢᴍ ᴡɪsʜ ᴋʀᴏ... 🌟**",
+         "**➠ ᴘᴀᴘᴀ ʏᴇ ᴀʙʜɪ ᴛᴀᴋ ᴜᴛʜ ɴᴀʜɪ, sᴄʜᴏᴏʟ ᴋᴀ ᴛɪᴍᴇ ɴɪᴋᴀʟᴛᴀ ᴊᴀ ʀʜᴀ ʜᴀɪ... 🥲**",
+         "**➠ ᴊᴀɴᴇᴍᴀɴ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ, ᴋʏᴀ ᴋʀ ʀʜᴇ ʜᴏ ... 😅**",
+         "**➠ ɢᴍ ʙᴇᴀsᴛɪᴇ, ʙʀᴇᴀᴋғᴀsᴛ ʜᴜᴀ ᴋʏᴀ... 🍳**",
+        ]
 
 
-async def tag_all_admins(_, message):
-    if message.chat.id in SPAM_CHATS:
-        return await message.reply_text(
-            "ᴛᴀɢɢɪɴɢ ᴘʀᴏᴄᴇss ɪs ᴀʟʀᴇᴀᴅʏ ʀᴜɴɴɪɴɢ ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ sᴛᴏᴘ sᴏ ᴜsᴇ /cancel"
-        )
-    replied = message.reply_to_message
-    if len(message.command) < 2 and not replied:
-        await message.reply_text(
-            "<b> ɢɪᴠᴇ sᴏᴍᴇ ᴛᴇxᴛ ᴛᴏ ᴛᴀɢ ᴀʟʟ, ʟɪᴋᴇ »</b> `@admins Hi Friends`"
-        )
-        return
-    if replied:
-        usernum = 0
-        usertxt = ""
-        try:
-            SPAM_CHATS.append(message.chat.id)
-            async for m in app.get_chat_members(
-                message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS
-            ):
-                if message.chat.id not in SPAM_CHATS:
-                    break
-                if m.user.is_deleted or m.user.is_bot:
-                    continue
-                usernum += 1
-                usertxt += f"[{m.user.first_name}](tg://user?id={m.user.id})  "
-                if usernum == 7:
-                    await replied.reply_text(
-                        usertxt,
-                        disable_web_page_preview=True,
-                    )
-                    await asyncio.sleep(1)
-                    usernum = 0
-                    usertxt = ""
-            if usernum != 0:
-                await replied.reply_text(
-                    usertxt,
-                    disable_web_page_preview=True,
-                )
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
-        try:
-            SPAM_CHATS.remove(message.chat.id)
-        except Exception:
-            pass
-    else:
-        usernum = 0
-        usertxt = ""
-        try:
-            text = message.text.split(None, 1)[1]
-            SPAM_CHATS.append(message.chat.id)
-            async for m in app.get_chat_members(
-                message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS
-            ):
-                if message.chat.id not in SPAM_CHATS:
-                    break
-                if m.user.is_deleted or m.user.is_bot:
-                    continue
-                usernum += 1
-                usertxt += f"[{m.user.first_name}](tg://user?id={m.user.id})  "
-                if usernum == 7:
-                    await app.send_message(
-                        message.chat.id,
-                        f"{text}\n{usertxt}",
-                        disable_web_page_preview=True,
-                    )
-                    await asyncio.sleep(2)
-                    usernum = 0
-                    usertxt = ""
-            if usernum != 0:
-                await app.send_message(
-                    message.chat.id,
-                    f"{text}\n\n{usertxt}",
-                    disable_web_page_preview=True,
-                )
-        except FloodWait as e:
-            await asyncio.sleep(e.value)
-        try:
-            SPAM_CHATS.remove(message.chat.id)
-        except Exception:
-            pass
-
-
-@app.on_message(
-    filters.command(["admin", "admins", "report"], prefixes=["/", "@"]) & filters.group
-)
-async def admintag_with_reporting(client, message):
-    if not message.from_user:
-        return
+@app.on_message(filters.command(["gntag", "tagmember" ], prefixes=["/", "@", "#"]))
+async def mentionall(client, message):
     chat_id = message.chat.id
-    from_user_id = message.from_user.id
-    admins = [
-        admin.user.id
-        async for admin in client.get_chat_members(
-            chat_id, filter=ChatMembersFilter.ADMINISTRATORS
-        )
-    ]
-    if message.command[0] == "report":
-        if from_user_id in admins:
-            return await message.reply_text(
-                "ᴏᴘᴘs! ʏᴏᴜ ᴀʀᴇ ʟᴏᴏᴋs ʟɪᴋᴇ ᴀɴ ᴀᴅᴍɪɴ!\nʏᴏᴜ ᴄᴀɴ'ᴛ ʀᴇᴘᴏʀᴛ ᴀɴʏ ᴜsᴇʀs ᴛᴏ ᴀᴅᴍɪɴ"
-            )
+    if message.chat.type == ChatType.PRIVATE:
+        return await message.reply("๏ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ɢʀᴏᴜᴘs.")
 
-    if from_user_id in admins:
-        return await tag_all_admins(client, message)
-
-    if len(message.text.split()) <= 1 and not message.reply_to_message:
-        return await message.reply_text("Reply to a message to report that user.")
-
-    reply = message.reply_to_message or message
-    reply_user_id = reply.from_user.id if reply.from_user else reply.sender_chat.id
-    linked_chat = (await client.get_chat(chat_id)).linked_chat
-    if reply_user_id == app.id:
-        return await message.reply_text("Why would I report myself?")
-    if (
-        reply_user_id in admins
-        or reply_user_id == chat_id
-        or (linked_chat and reply_user_id == linked_chat.id)
-    ):
-        return await message.reply_text(
-            "Do you know that the user you are replying to is an admin?"
-        )
-
-    user_mention = reply.from_user.mention if reply.from_user else "the user"
-    text = f"Reported {user_mention} to admins!."
-
-    for admin in admins:
-        admin_member = await client.get_chat_member(chat_id, admin)
-        if not admin_member.user.is_bot and not admin_member.user.is_deleted:
-            text += f"[\u2063](tg://user?id={admin})"
-
-    await reply.reply_text(text)
-
-
-@app.on_message(
-    filters.command(
-        [
-            "stopmention",
-            "cancel",
-            "cancelmention",
-            "offmention",
-            "mentionoff",
-            "cancelall",
-        ],
-        prefixes=["/", "@"],
-    )
-)
-async def cancelcmd(_, message):
-    chat_id = message.chat.id
-    admin = await is_admin(chat_id, message.from_user.id)
-    if not admin:
-        return
-    if chat_id in SPAM_CHATS:
-        try:
-            SPAM_CHATS.remove(chat_id)
-        except Exception:
-            pass
-        return await message.reply_text("<b>ᴛᴀɢɢɪɴɢ ᴘʀᴏᴄᴇss sᴜᴄᴄᴇssғᴜʟʟʏ sᴛᴏᴘᴘᴇᴅ!</b>")
-
+    is_admin = False
+    try:
+        participant = await client.get_chat_member(chat_id, message.from_user.id)
+    except UserNotParticipant:
+        is_admin = False
     else:
-        await message.reply_text("<b>ɴᴏ ᴘʀᴏᴄᴇss ᴏɴɢᴏɪɴɢ!</b>")
-        return
+        if participant.status in (
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        ):
+            is_admin = True
+    if not is_admin:
+        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs. ")
+
+    if message.reply_to_message and message.text:
+        return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
+    elif message.text:
+        mode = "text_on_cmd"
+        msg = message.text
+    elif message.reply_to_message:
+        mode = "text_on_reply"
+        msg = message.reply_to_message
+        if not msg:
+            return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ғᴏᴛ ᴛᴀɢɢɪɴɢ...")
+    else:
+        return await message.reply("/tagall ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ ᴛʏᴘᴇ ʟɪᴋᴇ ᴛʜɪs / ʀᴇᴘʟʏ ᴀɴʏ ᴍᴇssᴀɢᴇ ɴᴇxᴛ ᴛɪᴍᴇ ʙᴏᴛ ᴛᴀɢɢɪɴɢ...")
+    if chat_id in spam_chats:
+        return await message.reply("๏ ᴘʟᴇᴀsᴇ ᴀᴛ ғɪʀsᴛ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss...")
+    spam_chats.append(chat_id)
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.get_chat_members(chat_id):
+        if not chat_id in spam_chats:
+            break
+        if usr.user.is_bot:
+            continue
+        usrnum += 1
+        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
+
+        if usrnum == 1:
+            if mode == "text_on_cmd":
+                txt = f"{usrtxt} {random.choice(TAGMES)}"
+                await client.send_message(chat_id, txt)
+            elif mode == "text_on_reply":
+                await msg.reply(f"[{random.choice(EMOJI)}](tg://user?id={usr.user.id})")
+            await asyncio.sleep(4)
+            usrnum = 0
+            usrtxt = ""
+    try:
+        spam_chats.remove(chat_id)
+    except:
+        pass
 
 
-__MODULE__ = "Tᴀɢᴀʟʟ"
-__HELP__ = """
+@app.on_message(filters.command(["gmtag"], prefixes=["/", "@", "#"]))
+async def mention_allvc(client, message):
+    chat_id = message.chat.id
+    if message.chat.type == ChatType.PRIVATE:
+        return await message.reply("๏ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴏɴʟʏ ғᴏʀ ɢʀᴏᴜᴘs.")
 
-@all ᴏʀ /all | /tagall ᴏʀ  @tagall | /mentionall ᴏʀ  @mentionall [ᴛᴇxᴛ] ᴏʀ [ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴍᴇssᴀɢᴇ] ᴛᴏ ᴛᴀɢ ᴀʟʟ ᴜsᴇʀ's ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ ʙᴛ ʙᴏᴛ
+    is_admin = False
+    try:
+        participant = await client.get_chat_member(chat_id, message.from_user.id)
+    except UserNotParticipant:
+        is_admin = False
+    else:
+        if participant.status in (
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        ):
+            is_admin = True
+    if not is_admin:
+        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs. ")
+    if chat_id in spam_chats:
+        return await message.reply("๏ ᴘʟᴇᴀsᴇ ᴀᴛ ғɪʀsᴛ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss...")
+    spam_chats.append(chat_id)
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.get_chat_members(chat_id):
+        if not chat_id in spam_chats:
+            break
+        if usr.user.is_bot:
+            continue
+        usrnum += 1
+        usrtxt += f"[{usr.user.first_name}](tg://user?id={usr.user.id}) "
 
-/admins | @admins | /report [ᴛᴇxᴛ] ᴏʀ [ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏ ᴍᴇssᴀɢᴇ] ᴛᴏ ᴛᴀɢ ᴀʟʟ ᴀᴅᴍɪɴ's ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ
+        if usrnum == 1:
+            txt = f"{usrtxt} {random.choice(VC_TAG)}"
+            await client.send_message(chat_id, txt)
+            await asyncio.sleep(4)
+            usrnum = 0
+            usrtxt = ""
+    try:
+        spam_chats.remove(chat_id)
+    except:
+        pass
 
 
-/cancel Oʀ @cancel |  /offmention Oʀ @offmention | /mentionoff Oʀ @mentionoff | /cancelall Oʀ @cancelall - ᴛᴏ sᴛᴏᴘ ʀᴜɴɴɪɴɢ ᴀɴʏ ᴛᴀɢ ᴘʀᴏᴄᴇss
 
-**__Nᴏᴛᴇ__** Tʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴄᴀɴ ᴏɴʟʏ ᴜsᴇ ᴛʜᴇ Aᴅᴍɪɴs ᴏғ Cʜᴀᴛ ᴀɴᴅ ᴍᴀᴋᴇ Sᴜʀᴇ Bᴏᴛ ᴀɴᴅ ᴀssɪsᴛᴀɴᴛ ɪs ᴀɴ ᴀᴅᴍɪɴ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ's
-"""
+@app.on_message(filters.command(["gmstop", "gnstop", "cancle"]))
+async def cancel_spam(client, message):
+    if not message.chat.id in spam_chats:
+        return await message.reply("๏ ᴄᴜʀʀᴇɴᴛʟʏ ɪ'ᴍ ɴᴏᴛ ᴛᴀɢɢɪɴɢ ʙᴀʙʏ.")
+    is_admin = False
+    try:
+        participant = await client.get_chat_member(message.chat.id, message.from_user.id)
+    except UserNotParticipant:
+        is_admin = False
+    else:
+        if participant.status in (
+            ChatMemberStatus.ADMINISTRATOR,
+            ChatMemberStatus.OWNER
+        ):
+            is_admin = True
+    if not is_admin:
+        return await message.reply("๏ ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴅᴍɪɴ ʙᴀʙʏ, ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴛᴀɢ ᴍᴇᴍʙᴇʀs.")
+    else:
+        try:
+            spam_chats.remove(message.chat.id)
+        except:
+            pass
+        return await message.reply("๏ ᴍᴇɴᴛɪᴏɴ ᴘʀᴏᴄᴇss sᴛᴏᴘᴘᴇᴅ ๏")
+
+
