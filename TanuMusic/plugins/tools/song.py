@@ -1,80 +1,38 @@
 import os
-import future
-import asyncio
 import requests
-import wget
-import time
-import yt_dlp
-from urllib.parse import urlparse
-from youtube_search import YoutubeSearch
-from yt_dlp import YoutubeDL
-
-from TanuMusic import app
-from pyrogram import filters
 from pyrogram import Client, filters
-from pyrogram.types import Message
-from youtubesearchpython import VideosSearch
-from youtubesearchpython import SearchVideos
+from TanuMusic import app
 
-
-
-
-# ------------------------------------------------------------------------------- #
+def fetch_song(song_name):
+    url = f"https://song-teleservice.vercel.app/song?songName={song_name.replace(' ', '%20')}"
+    try:
+        response = requests.get(url)
+        return response.json() if response.status_code == 200 and "downloadLink" in response.json() else None
+    except Exception as e:
+        print(f"API Error: {e}")
+        return None
 
 @app.on_message(filters.command("song"))
-def download_song(_, message):
-    query = " ".join(message.command[1:])  
-    print(query)
-    m = message.reply("💌")
-    ydl_ops = {"format": "bestaudio[ext=m4a]"}
-    try:
-        results = YoutubeSearch(query, max_results=1).to_dict()
-        link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]
-        thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f"{title}.jpg"
-        thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, "wb").write(thumb.content)
-        duration = results[0]["duration"]
+async def handle_song(client, message):
+    song_name = message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else None
+    if not song_name:
+        return await message.reply("ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ sᴏɴɢ ɴᴀᴍᴇ ᴀғᴛᴇʀ ᴛʜᴇ /song ᴄᴏᴍᴍᴀɴᴅ..")
 
-        # Add these lines to define views and channel_name
-        views = results[0]["views"]
-        channel_name = results[0]["channel"]
+    song_info = fetch_song(song_name)
+    if not song_info:
+        return await message.reply(f"sᴏʀʀʏ, ɪ ᴄᴏᴜʟᴅɴ'ᴛ ғɪɴᴅ ᴛʜᴇ sᴏɴɢ '{song_name}'.")
 
-    except Exception as e:
-        m.edit("⚠️ ɴᴏ ʀᴇsᴜʟᴛs ᴡᴇʀᴇ ғᴏᴜɴᴅ. ᴍᴀᴋᴇ sᴜʀᴇ ʏᴏᴜ ᴛʏᴘᴇᴅ ᴛʜᴇ ᴄᴏʀʀᴇᴄᴛ sᴏɴɢ ɴᴀᴍᴇ.")
-        print(str(e))
-        return
-    m.edit("📥 ᴅᴏᴡɴʟᴏᴀᴅɪɴɢ...")
-    try:
-        with yt_dlp.YoutubeDL(ydl_ops) as ydl:
-            info_dict = ydl.extract_info(link, download=False)
-            audio_file = ydl.prepare_filename(info_dict)
-            ydl.process_info(info_dict)
-        secmul, dur, dur_arr = 1, 0, duration.split(":")
-        for i in range(len(dur_arr) - 1, -1, -1):
-            dur += int(float(dur_arr[i])) * secmul
-            secmul *= 60
-        m.edit("📤 ᴜᴘʟᴏᴀᴅɪɴɢ...")
+    filename = f"{song_info['trackName']}.mp3"
+    download_url = song_info['downloadLink']
 
-        message.reply_audio(
-            audio_file,
-            thumb=thumb_name,
-            title=title,
-            caption=f"❖ {title}\n\n● ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ ➥ {message.from_user.mention}\n● ᴠɪᴇᴡs ➥ {views}\n● ᴄʜᴀɴɴᴇʟ ➥ {channel_name}\n\n❖ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ➥ ๛ᴅ ʏ ɴ ᴀ ᴍ ɪ ᴄ ࿐",
-            duration=dur
-        )
-        m.delete()
-    except Exception as e:
-        m.edit(" - An error !!")
-        print(e)
+    # Download and save the file
+    with requests.get(download_url, stream=True) as r, open(filename, "wb") as file:
+        for chunk in r.iter_content(1024):
+            if chunk:
+                file.write(chunk)
 
-    try:
-        os.remove(audio_file)
-        os.remove(thumb_name)
-    except Exception as e:
-        print(e)
-        
-        
+    caption = (f"""❖ sᴏɴɢ ɴᴀᴍᴇ ➥ {song_info['trackName']}\n\n● ᴀʟʙᴜᴍ ➥ {song_info['album']}\n ● ʀᴇʟᴇᴀsᴇ ᴅᴀᴛᴇ ➥ {song_info['releaseDate']}\n● ʀᴇǫᴜᴇsᴛᴇᴅ ʙʏ ➥ {message.from_user.mention}\n❖ ᴘᴏᴡᴇʀᴇᴅ ʙʏ  ➥ ˹ ᴅʏɴᴀᴍɪᴄ ꭙ ᴍᴜsɪᴄ™""")
 
-# ------------------------------------------------------------------------------- #
+    # Send audio and clean up
+    await message.reply_audio(audio=open(filename, "rb"), caption=caption)
+    os.remove(filename)
