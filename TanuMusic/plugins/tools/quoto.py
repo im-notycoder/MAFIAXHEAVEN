@@ -247,44 +247,63 @@ async def msg_quotly_cmd(self: app, ctx: Message):
     is_reply = False
     if ctx.command[0].endswith("r"):
         is_reply = True
-    if len(ctx.text.split()) > 1:
-        check_arg = isArgInt(ctx.command[1])
-        if check_arg[0]:
-            if check_arg[1] < 2 or check_arg[1] > 10:
-                return await ctx.reply_msg("Invalid range", del_in=6)
-            try:
-                messages = [
-                    i
-                    for i in await self.get_messages(
-                        chat_id=ctx.chat.id,
-                        message_ids=range(
-                            ctx.reply_to_message.id,
-                            ctx.reply_to_message.id + (check_arg[1] + 5),
-                        ),
-                        replies=-1,
-                    )
-                    if not i.empty and not i.media
-                ]
-            except Exception:
-                return await ctx.reply_text("🤷🏻‍♂️")
-            try:
-                make_quotly = await pyrogram_to_quotly(messages, is_reply=is_reply)
-                bio_sticker = BytesIO(make_quotly)
-                bio_sticker.name = "misskatyquote_sticker.webp"
-                return await ctx.reply_sticker(bio_sticker)
-            except Exception:
-                return await ctx.reply_msg("🤷🏻‍♂️")
+
+    # Notify user that the quote process has started
+    processing_message = await ctx.reply_text("Pʟᴇᴀsᴇ Wᴀɪᴛ Dᴇᴀʀ 💕...")
+
     try:
-        messages_one = await self.get_messages(
-            chat_id=ctx.chat.id, message_ids=ctx.reply_to_message.id, replies=-1
-        )
-        messages = [messages_one]
-    except Exception:
-        return await ctx.reply_msg("🤷🏻‍♂️")
-    try:
-        make_quotly = await pyrogram_to_quotly(messages, is_reply=is_reply)
-        bio_sticker = BytesIO(make_quotly)
-        bio_sticker.name = "misskatyquote_sticker.webp"
-        return await ctx.reply_sticker(bio_sticker)
+        if len(ctx.text.split()) > 1:
+            check_arg = isArgInt(ctx.command[1])
+            if check_arg[0]:
+                if check_arg[1] < 2 or check_arg[1] > 10:
+                    await processing_message.delete()
+                    return await ctx.reply_msg("Invalid range. Please use 2-10.", del_in=6)
+
+                try:
+                    messages = [
+                        i
+                        for i in await self.get_messages(
+                            chat_id=ctx.chat.id,
+                            message_ids=range(
+                                ctx.reply_to_message.id,
+                                ctx.reply_to_message.id + (check_arg[1] + 5),
+                            ),
+                            replies=-1,
+                        )
+                        if not i.empty and not i.media
+                    ]
+                except Exception:
+                    await processing_message.delete()
+                    return await ctx.reply_text("Error fetching messages 🤷🏻‍♂️")
+
+                try:
+                    make_quotly = await pyrogram_to_quotly(messages, is_reply=is_reply)
+                    bio_sticker = BytesIO(make_quotly)
+                    bio_sticker.name = "misskatyquote_sticker.webp"
+                    await processing_message.delete()
+                    return await ctx.reply_sticker(bio_sticker)
+                except Exception:
+                    await processing_message.delete()
+                    return await ctx.reply_msg("Error generating quote 🤷🏻‍♂️")
+
+        try:
+            messages_one = await self.get_messages(
+                chat_id=ctx.chat.id, message_ids=ctx.reply_to_message.id, replies=-1
+            )
+            messages = [messages_one]
+        except Exception:
+            await processing_message.delete()
+            return await ctx.reply_msg("Error fetching the message 🤷🏻‍♂️")
+
+        try:
+            make_quotly = await pyrogram_to_quotly(messages, is_reply=is_reply)
+            bio_sticker = BytesIO(make_quotly)
+            bio_sticker.name = "misskatyquote_sticker.webp"
+            await processing_message.delete()
+            return await ctx.reply_sticker(bio_sticker)
+        except Exception as e:
+            await processing_message.delete()
+            return await ctx.reply_msg(f"ERROR: {e}")
     except Exception as e:
-        return await ctx.reply_msg(f"ERROR: {e}")
+        await processing_message.delete()
+        return await ctx.reply_msg(f"Unexpected ERROR: {e}")
