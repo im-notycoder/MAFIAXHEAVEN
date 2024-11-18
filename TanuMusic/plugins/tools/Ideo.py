@@ -1,16 +1,24 @@
 import requests
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from io import BytesIO
 
-# Function to generate an image based on the user's prompt
-def generate_image(prompt: str):
-    # Replace these with your actual Ideogram API Key and URL
-    url = "https://api.ideogram.ai/generate"
-    headers = {
-        "Api-Key": "SUOHFi94HRynxgjfmsGSRaKFz3sIehdLGKngNTMSM612u1-bsB-0LuxKUrEExltdbuX0vuee9GeLPyYSfmNUIQ",  # Replace with your Ideogram API key
-        "Content-Type": "application/json"
-    }
+# Your API Key for ideogram
+API_KEY = "SUOHFi94HRynxgjfmsGSRaKFz3sIehdLGKngNTMSM612u1-bsB-0LuxKUrEExltdbuX0vuee9GeLPyYSfmNUIQ"
+url = "https://api.ideogram.ai/generate"
 
+# Define the Pyrogram bot
+app = Client("tanu_music_bot")
+
+@app.on_message(filters.command("generate"))
+async def generate_image(client, message):
+    # Extract the prompt from the user's message
+    prompt = message.text.split(' ', 1)  # Split the command and prompt
+    if len(prompt) < 2:
+        await message.reply("Please provide a prompt after the command. Example: /generate A serene tropical beach scene.")
+        return
+    
+    prompt = prompt[1]  # Get the prompt text after the command
+    
     payload = {
         "image_request": {
             "prompt": prompt,
@@ -20,38 +28,25 @@ def generate_image(prompt: str):
         }
     }
 
-    # Make the API request
+    headers = {
+        "Api-Key": API_KEY,
+        "Content-Type": "application/json"
+    }
+
+    # Make the request to the ideogram API
     response = requests.post(url, json=payload, headers=headers)
-    
-    if response.status_code == 200:
-        # Get the image URL from the response
-        image_url = response.json().get('image_url')
-        return image_url
+    data = response.json()
+
+    # Check if the API responded with an image URL
+    if 'image_url' in data:
+        # Download the image from the URL
+        img_response = requests.get(data['image_url'])
+        img = BytesIO(img_response.content)
+        
+        # Send the image directly to the user
+        await message.reply_photo(img, caption="Here is your generated image!")
     else:
-        return None
+        await message.reply("Sorry, something went wrong. Please try again later.")
 
-# Define the /generate command plugin
-async def generate_command(client, message: Message):
-    # Check if the message starts with "/generate"
-    if message.text.startswith("/generate"):
-        # Extract the prompt from the user's message
-        prompt = message.text[len("/generate "):].strip()
-        
-        if not prompt:
-            # If no prompt is provided, send an error message
-            await message.reply_text("Please provide a prompt after /generate command. Example: /generate A futuristic city.")
-            return
-        
-        # Generate the image based on the prompt
-        image_url = generate_image(prompt)
-
-        if image_url:
-            # Send the generated image to the user
-            await message.reply_photo(photo=image_url, caption=f"Here is your generated image for the prompt: {prompt}")
-        else:
-            # If image generation fails
-            await message.reply_text("Sorry, I couldn't generate the image. Please try again later.")
-
-# Add this plugin to your bot (assuming you have a running Pyrogram Client)
-def add_generate_plugin(app):
-    app.add_handler(filters.command("generate")(generate_command))
+# Run the bot
+app.run()
