@@ -11,7 +11,7 @@ API_ID = int(getenv("API_ID", "23479193"))
 API_HASH = getenv("API_HASH", "d4acc27e2740e0015363cf9d4e7f8928")
 
 #❖ Add Owner Username without @ 
-OWNER_USERNAME = getenv("OWNER_USERNAME", "dark_seraphim_00)
+OWNER_USERNAME = getenv("OWNER_USERNAME", "dark_seraphim_00")
 
 #❖  Get Your bot username
 BOT_USERNAME = getenv("BOT_USERNAME", "DynamicMusicXBot")
