@@ -17,7 +17,7 @@ OWNER_USERNAME = getenv("OWNER_USERNAME", "dark_seraphim_00)
 BOT_USERNAME = getenv("BOT_USERNAME", "DynamicMusicXBot")
 
 #❖  Don't Add style font 
-BOT_NAME = getenv("BOT_NAME", "˹Exᴏᴛɪᴄᴍᴜsɪᴄ ꭙ ʙᴏᴛ​˼")
+BOT_NAME = getenv("BOT_NAME", "𝑫𝒚𝒏𝒂𝒎𝒊𝒄 ✗ 𝑴𝒖𝒔𝒊𝒄™")
 
 #❖ get Your Assistant User name
 ASSUSERNAME = getenv("ASSUSERNAME", "𝑫𝒚𝒏𝒂𝒎𝒊𝒄 ✗ 𝑨𝒔𝒔𝒊𝒔𝒕𝒂𝒏𝒕")
