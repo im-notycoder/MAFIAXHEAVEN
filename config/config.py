@@ -54,7 +54,7 @@ GIT_TOKEN = getenv(
 )  #❖ Fill this variable if your upstream repository is private
 
 SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/See_of_Soul")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/Nxt_bots")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/CHATTING_CAFE_OFFICIAL")
 
 #❖ Set this to True if you want the assistant to automatically leave chats after an interval
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
@@ -92,13 +92,13 @@ confirmer = {}
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://i.ibb.co/5n5H1bk/photo-2024-11-12-03-02-43-7436222925079838748.jpg"
+    "START_IMG_URL", "https://i.ibb.co/xmxBfGm/photo-2024-11-19-14-16-17-7438994282792353840.jpg"
 )
 PING_IMG_URL = getenv(
     "PING_IMG_URL", "https://envs.sh/qEB.jpg"
 )
 PLAYLIST_IMG_URL = "https://telegra.ph/file/7795e58425337d0455e95.jpg"
-STATS_IMG_URL = "https://envs.sh/SSk.jpg"
+STATS_IMG_URL = "https://i.ibb.co/xmxBfGm/photo-2024-11-19-14-16-17-7438994282792353840.jpg"
 TELEGRAM_AUDIO_URL = "https://telegra.ph/file/d2081243af7c1d7578b7b.jpg"
 TELEGRAM_VIDEO_URL = "https://telegra.ph/file/d2081243af7c1d7578b7b.jpg"
 STREAM_IMG_URL = "https://telegra.ph/file/982b01ba53c3d69b0d0ce.jpg"
