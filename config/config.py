@@ -53,8 +53,8 @@ GIT_TOKEN = getenv(
     "GIT_TOKEN", None
 )  #❖ Fill this variable if your upstream repository is private
 
-SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/See_of_Soul")
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/CHATTING_CAFE_OFFICIAL")
+SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/DynamicXNetwork")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/DynamicXSupport")
 
 #❖ Set this to True if you want the assistant to automatically leave chats after an interval
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False))
@@ -76,7 +76,7 @@ TG_VIDEO_FILESIZE_LIMIT = int(getenv("TG_VIDEO_FILESIZE_LIMIT", 1073741824))
 
 
 #❖ Get your pyrogram v2 session from @StringFatherBot on Telegram
-STRING1 = getenv("STRING_SESSION", "BAFmQ5kAwpkLfRuBqG-gyFd6VVC5oxvV7G-wmDe0zg-kE9WOiilYOVqLZmnlgwa6a_YxgwRJBegmQSK1qBdL3Nh1bWnRXJ9oRoGgc9KBqXUgG1rUKrQBWN0TovFQZc8qXiqHsiE9gj_sIOCDm5xp2WfspqxuuE9y2x9oo_Zf7ZvL-ro-TW4LSQnHUS6n6GzOfZLikTWk84B4o3U3uUiYUaTRf7LfsJEu7x7MVT1ED898l5TAKv9p3AU25hmrkPQHXli9tA5DuYzZexoI8EeNmEHf7kru0TRcC5SayWvdgO9k_Swo9kshkruFpAunmNPWM4zP2FSMtg0bdXGy6YuM4cAEIrprswAAAAGos4PUAA")
+STRING1 = getenv("STRING_SESSION", "BADNvmIAHmKLztIDsKXxSEkqwi9Wp7Y-PK9VHpDGjsP45JhIZfg5283F2n_gn008UusUvUOM_oqigRgUTiQhcSWC98wIX-a7BZd4H74RsEFUxkmXgBv7ty0nUe0gLU5bMm_sxv7lT6eGsGa_nJz4Ofqf1sqU11C5RVbp_bq_ZJVME9ofdvZlKYeTNStuIs_VvTZqVe3kz-CiD7YN9yYrXAnaVzbQK4wsnsuVScVe6Ayl2VCvcWRYHgAzexa3SFCzbq3cUlVuatjv2alhRLBtx6cSUlP8EDHtjHPSGgodCjeb4TWa7hJuXBcj_Hh7Ba5rxrlN3Sdkp4KFwNcMidrN-iH3AVmLHAAAAAGos4PUAA")
 STRING2 = getenv("STRING_SESSION2", None)
 STRING3 = getenv("STRING_SESSION3", None)
 STRING4 = getenv("STRING_SESSION4", None)
