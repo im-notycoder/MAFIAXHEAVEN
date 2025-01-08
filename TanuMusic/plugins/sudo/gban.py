@@ -4,7 +4,7 @@ from pyrogram import filters
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message
 
-from TanuMusicimport app
+from TanuMusic import app
 from TanuMusic.misc import SUDOERS
 from TanuMusic.utils import get_readable_time
 from TanuMusic.utils.database import (
@@ -115,12 +115,11 @@ async def gbanned_list(client, message: Message, _):
         try:
             user = await app.get_users(user_id)
             user = user.first_name if not user.mention else user.mention
-            msg += f"{count}➤ {user}\n"
+            msg += f"❖ {count} ➥ {user}\n"
         except Exception:
-            msg += f"{count}➤ {user_id}\n"
+            msg += f"❖ {count} ➥ {user_id}\n"
             continue
     if count == 0:
         return await mystic.edit_text(_["gban_10"])
     else:
         return await mystic.edit_text(msg)
-        
