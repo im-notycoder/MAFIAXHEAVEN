@@ -2,11 +2,10 @@ import asyncio
 from pyrogram import Client, filters
 import requests
 from io import BytesIO
+from TanuMusic import app 
 
 API_KEY = "SUOHFi94HRynxgjfmsGSRaKFz3sIehdLGKngNTMSM612u1-bsB-0LuxKUrEExltdbuX0vuee9GeLPyYSfmNUIQ"
 url = "https://api.ideogram.ai/generate"
-
-app = Client("tanu_music_bot")
 
 @app.on_message(filters.command("generate"))
 async def generate_image(client, message):
@@ -40,7 +39,3 @@ async def generate_image(client, message):
         await message.reply_photo(img, caption="Here is your generated image!")
     else:
         await message.reply("Sorry, something went wrong. Please try again later.")
-
-# Use asyncio to run the bot without conflict with the event loop
-if __name__ == "__main__":
-    asyncio.run(app.start())
