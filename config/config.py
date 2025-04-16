@@ -22,10 +22,6 @@ BOT_NAME = getenv("BOT_NAME", "𝑫𝒚𝒏𝒂𝒎𝒊𝒄 ✗ 𝑴𝒖𝒔𝒊
 #❖ get Your Assistant User name
 ASSUSERNAME = getenv("ASSUSERNAME", "𝑫𝒚𝒏𝒂𝒎𝒊𝒄 ✗ 𝑨𝒔𝒔𝒊𝒔𝒕𝒂𝒏𝒕")
 
-# Vars For API End Pont.
-YTPROXY_URL = getenv("YTPROXY_URL", 'https://tubed.okflix.top') ## E.G https://yt.okflix.
-YT_API_KEY = "sparrow123"
-
 #❖ Get your token from @BotFather on Telegram.
 BOT_TOKEN = getenv("BOT_TOKEN", "8164404114:AAFKm8xETsR6KbkfCBPsQHNiVoCXf9o9-98")
 
