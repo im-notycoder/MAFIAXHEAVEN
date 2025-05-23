@@ -28,6 +28,10 @@ BOT_TOKEN = getenv("BOT_TOKEN", "8164404114:AAFKm8xETsR6KbkfCBPsQHNiVoCXf9o9-98"
 #❖ Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = getenv("MONGO_DB_URI", "mongodb+srv://EXONTESTMONGO:EXONTESTMONGO@cluster0.bviw7ic.mongodb.net/?retryWrites=true&w=majority")
 
+# Vars For API End Pont.
+API_URL = getenv("API_URL", 'https://api.thequickearn.xyz') #youtube song url
+API_KEY = getenv("API_KEY", "NxGBNexGenBots26f6e9") # youtube song api key, get it from https://t.me/RahulTC
+
 DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 600000))
 
 #❖  Chat id of a group for logging bot's activities
