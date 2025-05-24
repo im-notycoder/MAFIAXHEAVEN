@@ -75,7 +75,7 @@ def aq_markup(_, chat_id):
           #  InlineKeyboardButton(text="ʀᴇᴘʟᴀʏ", callback_data=f"ADMIN Replay|{chat_id}"),
         #],
         [
-            InlineKeyboardButton(text="ᴄʟᴏsᴇ🍂", callback_data="close"),
+            InlineKeyboardButton(text="ᴄʟᴏsᴇ", callback_data="close"),
         ]
     ]
     return buttons
