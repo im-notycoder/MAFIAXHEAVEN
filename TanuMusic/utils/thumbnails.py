@@ -9,7 +9,7 @@ CACHE_DIR = "cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 WIDTH, HEIGHT = 1280, 720
-CARD_WIDTH, CARD_HEIGHT = 1000, 580
+CARD_WIDTH, CARD_HEIGHT = 1000, 600
 CARD_RADIUS = 54
 PADDING_X, PADDING_Y = 140, 80
 
@@ -73,7 +73,6 @@ async def get_thumb(videoid: str, progress_ratio: float = 0.5) -> str:
         card_color = tuple(int(c * 0.6) for c in avg_color)
 
         brightness = get_brightness(card_color)
-
         if brightness < 130:
             text_color = (255, 255, 255)
             meta_text_color = (220, 220, 220)
@@ -111,13 +110,32 @@ async def get_thumb(videoid: str, progress_ratio: float = 0.5) -> str:
         card_draw.text((text_x, text_y), short_title, font=title_font, fill=text_color)
         card_draw.text((text_x, text_y + 55), short_meta, font=meta_font, fill=meta_text_color)
 
-        # Dynamic progress bar
-        bar_y = CARD_HEIGHT - 45
+        # Progress bar spacing fix
+        progress_top = text_y + 55 + 50  # 50px below subtitle
+        bar_height = 10
+        bar_radius = 5
         bar_width = max_text_width
-        fill_width = int(bar_width * progress_ratio)
-        card_draw.rounded_rectangle((text_x, bar_y, text_x + bar_width, bar_y + 8), radius=4, fill=(120, 120, 120))
-        card_draw.rounded_rectangle((text_x, bar_y, text_x + fill_width, bar_y + 8), radius=4, fill=progress_color)
-        card_draw.ellipse((text_x + fill_width - 10, bar_y - 5, text_x + fill_width + 10, bar_y + 15), fill=progress_color)
+        fill_width = int(bar_width * max(0.0, min(progress_ratio, 1.0)))
+        dot_radius = 12
+
+        # background bar
+        card_draw.rounded_rectangle(
+            (text_x, progress_top, text_x + bar_width, progress_top + bar_height),
+            radius=bar_radius, fill=(120, 120, 120)
+        )
+        # progress fill
+        card_draw.rounded_rectangle(
+            (text_x, progress_top, text_x + fill_width, progress_top + bar_height),
+            radius=bar_radius, fill=progress_color
+        )
+        # circular thumb
+        dot_center_x = text_x + fill_width
+        dot_center_y = progress_top + bar_height // 2
+        card_draw.ellipse(
+            (dot_center_x - dot_radius//2, dot_center_y - dot_radius//2,
+             dot_center_x + dot_radius//2, dot_center_y + dot_radius//2),
+            fill=progress_color
+        )
 
         mask_card = Image.new("L", (CARD_WIDTH, CARD_HEIGHT), 0)
         ImageDraw.Draw(mask_card).rounded_rectangle((0, 0, CARD_WIDTH, CARD_HEIGHT), radius=CARD_RADIUS, fill=255)
