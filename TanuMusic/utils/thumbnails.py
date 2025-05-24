@@ -5,7 +5,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageStat
 from youtubesearchpython.__future__ import VideosSearch
 from config import FAILED
 
-# Constants
 CACHE_DIR = "cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
 
@@ -30,6 +29,10 @@ def get_average_color(image: Image.Image) -> tuple:
     stat = ImageStat.Stat(small)
     return tuple(int(c) for c in stat.mean[:3])
 
+def get_brightness(color: tuple) -> float:
+    r, g, b = color
+    return (0.299*r + 0.587*g + 0.114*b)
+
 async def get_thumb(videoid: str) -> str:
     cache_path = os.path.join(CACHE_DIR, f"{videoid}_musiccard.jpg")
     if os.path.exists(cache_path):
@@ -45,6 +48,9 @@ async def get_thumb(videoid: str) -> str:
     except Exception:
         title, channel, thumbnail, views = "Unknown Title", "Unknown Channel", FAILED, "0 views"
 
+    if thumbnail == FAILED or not thumbnail:
+        return FAILED
+
     thumb_path = os.path.join(CACHE_DIR, f"thumb_{videoid}.png")
     try:
         async with aiohttp.ClientSession() as session:
@@ -58,7 +64,6 @@ async def get_thumb(videoid: str) -> str:
         return FAILED
 
     try:
-        # Load album art
         album_art_raw = Image.open(thumb_path).convert("RGB")
 
         # Background = blurred album art
@@ -67,7 +72,19 @@ async def get_thumb(videoid: str) -> str:
 
         # Auto card color based on album art average
         avg_color = get_average_color(album_art_raw)
-        card_color = tuple(int(c * 0.6) for c in avg_color)  # darken for contrast
+        card_color = tuple(int(c * 0.6) for c in avg_color)  # darken average color
+
+        brightness = get_brightness(card_color)
+
+        # Decide colors based on brightness
+        if brightness < 130:
+            text_color = (255, 255, 255)       # white text on dark card
+            meta_text_color = (220, 220, 220)  # lighter gray for subtitle
+            progress_color = (255, 0, 180)     # bright pink progress bar
+        else:
+            text_color = (40, 40, 40)          # dark text on light card
+            meta_text_color = (80, 80, 80)     # dark gray subtitle
+            progress_color = (180, 0, 120)     # darker magenta progress bar
 
         # Card base
         card = Image.new("RGBA", (CARD_WIDTH, CARD_HEIGHT), (0, 0, 0, 0))
@@ -96,14 +113,14 @@ async def get_thumb(videoid: str) -> str:
         max_title_width = CARD_WIDTH - 120
 
         short_title = truncate_text(title, title_font, max_title_width)
-        card_draw.text((text_x, text_y), short_title, font=title_font, fill=(255, 255, 255))
-        card_draw.text((text_x, text_y + 55), f"{channel} • {views}", font=meta_font, fill=(220, 220, 220))
+        card_draw.text((text_x, text_y), short_title, font=title_font, fill=text_color)
+        card_draw.text((text_x, text_y + 55), f"{channel} • {views}", font=meta_font, fill=meta_text_color)
 
         # Progress bar
         bar_y = CARD_HEIGHT - 45
         card_draw.rounded_rectangle((text_x, bar_y, text_x + max_title_width, bar_y + 8), radius=4, fill=(120, 120, 120))
-        card_draw.rounded_rectangle((text_x, bar_y, text_x + 360, bar_y + 8), radius=4, fill=(255, 0, 180))
-        card_draw.ellipse((text_x + 350, bar_y - 5, text_x + 370, bar_y + 15), fill=(255, 0, 180))
+        card_draw.rounded_rectangle((text_x, bar_y, text_x + 360, bar_y + 8), radius=4, fill=progress_color)
+        card_draw.ellipse((text_x + 350, bar_y - 5, text_x + 370, bar_y + 15), fill=progress_color)
 
         # Paste card onto background
         mask_card = Image.new("L", (CARD_WIDTH, CARD_HEIGHT), 0)
@@ -116,4 +133,6 @@ async def get_thumb(videoid: str) -> str:
 
     except Exception as e:
         print(f"Thumbnail generation failed: {e}")
+        import traceback
+        traceback.print_exc()
         return FAILED
