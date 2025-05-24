@@ -10,9 +10,9 @@ CACHE_DIR = "cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 WIDTH, HEIGHT = 1280, 720
-CARD_WIDTH, CARD_HEIGHT = 1000, 580
+CARD_WIDTH, CARD_HEIGHT = 1000, 600
 CARD_RADIUS = 54
-PADDING_X, PADDING_Y = 140, 80
+PADDING_X, PADDING_Y = 140, 60
 
 FONT_TITLE = "TanuMusic/assets/font.ttf"
 FONT_SUB = "TanuMusic/assets/font2.ttf"
@@ -30,7 +30,6 @@ def resize_and_center(image, target_box):
     target_h = target_box[3] - target_box[1]
     aspect_ratio = image.width / image.height
 
-    # Fit image within target box preserving aspect ratio
     if target_w / aspect_ratio <= target_h:
         new_w = target_w
         new_h = int(target_w / aspect_ratio)
@@ -73,34 +72,26 @@ async def get_thumb(videoid: str) -> str:
         return FAILED
 
     try:
-        # Load album art
         album_art = Image.open(thumb_path).convert("RGB")
-
-        # Create blurred background from album art
         bg = album_art.resize((WIDTH, HEIGHT)).filter(ImageFilter.GaussianBlur(20))
 
-        # Create card
         card = Image.new("RGBA", (CARD_WIDTH, CARD_HEIGHT), (0, 0, 0, 0))
         card_draw = ImageDraw.Draw(card)
         card_draw.rounded_rectangle((0, 0, CARD_WIDTH, CARD_HEIGHT), radius=CARD_RADIUS, fill=(18, 18, 18))
 
-        # Paste resized album art (preserving aspect ratio)
-        art_box = (60, 40, CARD_WIDTH - 60, 370)
+        # Enlarged album art box
+        art_box = (60, 40, CARD_WIDTH - 60, 400)
         resized_art, paste_pos = resize_and_center(album_art, art_box)
         mask = Image.new("L", resized_art.size, 0)
         ImageDraw.Draw(mask).rounded_rectangle((0, 0, *resized_art.size), radius=40, fill=255)
         card.paste(resized_art, paste_pos, mask)
 
-        # Load fonts
-        try:
-            title_font = ImageFont.truetype(FONT_TITLE, 46)
-            meta_font = ImageFont.truetype(FONT_SUB, 32)
-        except Exception as e:
-            print(f"Font loading failed: {e}")
-            title_font = meta_font = ImageFont.load_default()
+        # Fonts
+        title_font = ImageFont.truetype(FONT_TITLE, 46)
+        meta_font = ImageFont.truetype(FONT_SUB, 32)
 
-        # Draw text
-        text_y = art_box[3] + 25
+        # Text
+        text_y = art_box[3] + 20
         text_x = art_box[0]
         max_title_width = CARD_WIDTH - 120
 
@@ -114,12 +105,11 @@ async def get_thumb(videoid: str) -> str:
         card_draw.rounded_rectangle((text_x, bar_y, text_x + 360, bar_y + 8), radius=4, fill=(255, 0, 180))
         card_draw.ellipse((text_x + 350, bar_y - 5, text_x + 370, bar_y + 15), fill=(255, 0, 180))
 
-        # Paste card onto background
+        # Paste onto blurred background
         mask_card = Image.new("L", (CARD_WIDTH, CARD_HEIGHT), 0)
         ImageDraw.Draw(mask_card).rounded_rectangle((0, 0, CARD_WIDTH, CARD_HEIGHT), radius=CARD_RADIUS, fill=255)
         bg.paste(card, (PADDING_X, PADDING_Y), mask_card)
 
-        # Save and cleanup
         os.remove(thumb_path)
         bg.save(cache_path, format="JPEG")
         return cache_path
