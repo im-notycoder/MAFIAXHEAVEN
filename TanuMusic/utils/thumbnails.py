@@ -17,12 +17,12 @@ FONT_TITLE = "TanuMusic/assets/font.ttf"
 FONT_SUB = "TanuMusic/assets/font2.ttf"
 
 def truncate_text(text, font, max_width):
+    ellipsis = "..."
     if font.getlength(text) <= max_width:
         return text
-    truncated = text
-    while font.getlength(truncated + "...") > max_width and truncated:
-        truncated = truncated[:-1]
-    return truncated + "..." if truncated else "..."
+    while font.getlength(text + ellipsis) > max_width and text:
+        text = text[:-1]
+    return text + ellipsis if text else ellipsis
 
 def get_average_color(image: Image.Image) -> tuple:
     small = image.resize((50, 50))
@@ -33,7 +33,7 @@ def get_brightness(color: tuple) -> float:
     r, g, b = color
     return (0.299*r + 0.587*g + 0.114*b)
 
-async def get_thumb(videoid: str) -> str:
+async def get_thumb(videoid: str, progress_ratio: float = 0.5) -> str:
     cache_path = os.path.join(CACHE_DIR, f"{videoid}_musiccard.jpg")
     if os.path.exists(cache_path):
         return cache_path
@@ -66,32 +66,27 @@ async def get_thumb(videoid: str) -> str:
     try:
         album_art_raw = Image.open(thumb_path).convert("RGB")
 
-        # Background = blurred album art
         bg = album_art_raw.resize((WIDTH, HEIGHT)).filter(ImageFilter.GaussianBlur(24))
         draw = ImageDraw.Draw(bg)
 
-        # Auto card color based on album art average
         avg_color = get_average_color(album_art_raw)
-        card_color = tuple(int(c * 0.6) for c in avg_color)  # darken average color
+        card_color = tuple(int(c * 0.6) for c in avg_color)
 
         brightness = get_brightness(card_color)
 
-        # Decide colors based on brightness
         if brightness < 130:
-            text_color = (255, 255, 255)       # white text on dark card
-            meta_text_color = (220, 220, 220)  # lighter gray for subtitle
-            progress_color = (255, 0, 180)     # bright pink progress bar
+            text_color = (255, 255, 255)
+            meta_text_color = (220, 220, 220)
+            progress_color = (255, 0, 180)
         else:
-            text_color = (40, 40, 40)          # dark text on light card
-            meta_text_color = (80, 80, 80)     # dark gray subtitle
-            progress_color = (180, 0, 120)     # darker magenta progress bar
+            text_color = (40, 40, 40)
+            meta_text_color = (80, 80, 80)
+            progress_color = (180, 0, 120)
 
-        # Card base
         card = Image.new("RGBA", (CARD_WIDTH, CARD_HEIGHT), (0, 0, 0, 0))
         card_draw = ImageDraw.Draw(card)
         card_draw.rounded_rectangle((0, 0, CARD_WIDTH, CARD_HEIGHT), radius=CARD_RADIUS, fill=card_color)
 
-        # Album Art
         art_box = (60, 40, CARD_WIDTH - 60, 440)
         art_width = art_box[2] - art_box[0]
         art_height = art_box[3] - art_box[1]
@@ -100,29 +95,30 @@ async def get_thumb(videoid: str) -> str:
         ImageDraw.Draw(mask).rounded_rectangle((0, 0, art_width, art_height), radius=40, fill=255)
         card.paste(album_art, (art_box[0], art_box[1]), mask)
 
-        # Fonts
         try:
             title_font = ImageFont.truetype(FONT_TITLE, 46)
             meta_font = ImageFont.truetype(FONT_SUB, 32)
         except:
             title_font = meta_font = ImageFont.load_default()
 
-        # Text
         text_y = art_box[3] + 25
         text_x = art_box[0]
-        max_title_width = CARD_WIDTH - 120
+        max_text_width = CARD_WIDTH - 2 * text_x
 
-        short_title = truncate_text(title, title_font, max_title_width)
+        short_title = truncate_text(title, title_font, max_text_width)
+        short_meta = truncate_text(f"{channel} • {views}", meta_font, max_text_width)
+
         card_draw.text((text_x, text_y), short_title, font=title_font, fill=text_color)
-        card_draw.text((text_x, text_y + 55), f"{channel} • {views}", font=meta_font, fill=meta_text_color)
+        card_draw.text((text_x, text_y + 55), short_meta, font=meta_font, fill=meta_text_color)
 
-        # Progress bar
+        # Dynamic progress bar
         bar_y = CARD_HEIGHT - 45
-        card_draw.rounded_rectangle((text_x, bar_y, text_x + max_title_width, bar_y + 8), radius=4, fill=(120, 120, 120))
-        card_draw.rounded_rectangle((text_x, bar_y, text_x + 360, bar_y + 8), radius=4, fill=progress_color)
-        card_draw.ellipse((text_x + 350, bar_y - 5, text_x + 370, bar_y + 15), fill=progress_color)
+        bar_width = max_text_width
+        fill_width = int(bar_width * progress_ratio)
+        card_draw.rounded_rectangle((text_x, bar_y, text_x + bar_width, bar_y + 8), radius=4, fill=(120, 120, 120))
+        card_draw.rounded_rectangle((text_x, bar_y, text_x + fill_width, bar_y + 8), radius=4, fill=progress_color)
+        card_draw.ellipse((text_x + fill_width - 10, bar_y - 5, text_x + fill_width + 10, bar_y + 15), fill=progress_color)
 
-        # Paste card onto background
         mask_card = Image.new("L", (CARD_WIDTH, CARD_HEIGHT), 0)
         ImageDraw.Draw(mask_card).rounded_rectangle((0, 0, CARD_WIDTH, CARD_HEIGHT), radius=CARD_RADIUS, fill=255)
         bg.paste(card, (PADDING_X, PADDING_Y), mask_card)
@@ -132,7 +128,8 @@ async def get_thumb(videoid: str) -> str:
         return cache_path
 
     except Exception as e:
-        print(f"Thumbnail generation failed: {e}")
         import traceback
         traceback.print_exc()
+        if os.path.exists(thumb_path):
+            os.remove(thumb_path)
         return FAILED
